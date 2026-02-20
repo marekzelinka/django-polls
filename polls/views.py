@@ -1,7 +1,24 @@
-from django.http import HttpResponse
-from django.shortcuts import render  # noqa: F401
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import get_object_or_404, render
+
+from polls.models import Question
 
 
-# Create your views here.
-def index(_request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+def index(request: HttpRequest) -> HttpResponse:
+    latest_questions = Question.objects.order_by("-pub_date")[:5]
+
+    return render(request, "polls/index.jinja", {"latest_questions": latest_questions})
+
+
+def detail(request: HttpRequest, question_id: int) -> HttpResponse:
+    question = get_object_or_404(Question, pk=question_id)
+
+    return render(request, "polls/detail.jinja", {"question": question})
+
+
+def results(_request: HttpRequest, question_id: int) -> HttpResponse:
+    return HttpResponse(f"You're looking at the results of question {question_id}.")
+
+
+def vote(_request: HttpRequest, question_id: int) -> HttpResponse:
+    return HttpResponse(f"You're voting on question {question_id}.")
