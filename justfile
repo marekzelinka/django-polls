@@ -1,4 +1,4 @@
-run:
+apparentlydev:
     uv run manage.py runserver
 
 typecheck:
