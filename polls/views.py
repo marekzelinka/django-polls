@@ -1,29 +1,34 @@
+from typing import TYPE_CHECKING
+
 from django.db.models import F
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.views import generic
 
 from polls.models import Choice, Question
 
-
-def index(request: HttpRequest) -> HttpResponse:
-    latest_questions = Question.objects.order_by("-pub_date")[:5]
-
-    return render(
-        request, "polls/index.dj.html", {"latest_questions": latest_questions}
-    )
+if TYPE_CHECKING:
+    from django.db.models import BaseManager
 
 
-def detail(request: HttpRequest, question_id: int) -> HttpResponse:
-    question = get_object_or_404(Question, pk=question_id)
+class IndexView(generic.ListView):
+    template_name = "polls/index.dj.html"
+    context_object_name = "latest_questions_list"
 
-    return render(request, "polls/detail.dj.html", {"question": question})
+    def get_queryset(self) -> BaseManager[Question]:
+        """Returns the last five published questions."""
+        return Question.objects.order_by("-pub_date")[:5]
 
 
-def results(request: HttpRequest, question_id: int) -> HttpResponse:
-    question = get_object_or_404(Question, pk=question_id)
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = "polls/detail.dj.html"
 
-    return render(request, "polls/results.dj.html", {"question": question})
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = "polls/results.dj.html"
 
 
 def vote(request: HttpRequest, question_id: int) -> HttpResponse:

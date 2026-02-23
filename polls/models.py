@@ -13,8 +13,7 @@ class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField(verbose_name="date published")
 
-    if TYPE_CHECKING:
-        choice_set: Manager[Choice]
+    choice_set: Manager[Choice]
 
     def __str__(self) -> str:
         return self.question_text
