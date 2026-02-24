@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class IndexView(generic.ListView):
-    template_name = "polls/index.dj.html"
+    template_name = "polls/index.html"
     context_object_name = "latest_questions_list"
 
     def get_queryset(self) -> BaseManager[Question]:
@@ -23,12 +23,12 @@ class IndexView(generic.ListView):
 
 class DetailView(generic.DetailView):
     model = Question
-    template_name = "polls/detail.dj.html"
+    template_name = "polls/detail.html"
 
 
 class ResultsView(generic.DetailView):
     model = Question
-    template_name = "polls/results.dj.html"
+    template_name = "polls/results.html"
 
 
 def vote(request: HttpRequest, question_id: int) -> HttpResponse:
@@ -39,7 +39,7 @@ def vote(request: HttpRequest, question_id: int) -> HttpResponse:
     except KeyError, Choice.DoesNotExist:
         return render(
             request,
-            "polls/detail.dj.html",
+            "polls/detail.html",
             {"question": question, "error_message": "You didn't select a choice."},
         )
     else:
