@@ -141,3 +141,29 @@ class QuestionDetailView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, text=past_question.question_text)
         self.assertEqual(response.context["question"], past_question)
+
+
+class QuestionResultsView(TestCase):
+    def test_future_question(self) -> None:
+        """
+        The results view of a question with a pub_date in the future returns a
+        404 not found.
+        """
+        future_question = create_question(question_text="Future Question", days=30)
+
+        response = self.client.get(reverse("polls:results", args=(future_question.id,)))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_past_question(self) -> None:
+        """
+        The results view of a question with a pub_date in the past displays the
+        question text.
+        """
+        past_question = create_question(question_text="Past Question", days=-30)
+
+        response = self.client.get(reverse("polls:results", args=(past_question.id,)))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, text=past_question.question_text)
+        self.assertEqual(response.context["question"], past_question)
