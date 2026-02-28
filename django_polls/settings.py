@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
+import sys
 from pathlib import Path
 
 import django_stubs_ext
@@ -73,6 +75,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "django_polls.wsgi.application"
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+TESTING = "test" in sys.argv or "PYTEST_VERSION" in os.environ
+
+if not TESTING:
+    INSTALLED_APPS = [
+        *INSTALLED_APPS,
+        "debug_toolbar",
+    ]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
